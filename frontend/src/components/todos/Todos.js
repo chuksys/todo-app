@@ -1,27 +1,42 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {
   Container,
   Paper,
   Box,
 } from "@material-ui/core";
-import { useTodosContext } from "../../TodosContext"
+//import { useTodosContext } from "../../context/TodosContext"
 import FilterTodos from "../filter_todos/FilterTodos"
 import Todo from "../todo/Todo"
 import useLoadMore from "../../hooks/useLoadMore"
+import useStyles from "../../hooks/useStyles"
+import ACTIONS from "../../actions"
+import { useSelector, useDispatch } from "react-redux"
+import { loadTodos, loadMoreTodos } from "../../redux/todosReducer"
 
 function Todos() {
-  const { ACTIONS, state, dispatcher } = useTodosContext()
-  const { 
+  //const { ACTIONS, state, dispatcher } = useTodosContext()
+
+  const classes = useStyles()
+  const { todosContainer, todoTextCompleted, deleteTodo } = classes
+  const state = useSelector(state => state)
+  const { todos, isLoading, isFiltered, filteredTodos } = state
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(loadTodos())
+  }, [])
+
+ /*  const { 
     todos, 
     isLoading, 
     isFiltered, 
     filteredTodos, 
-    todosContainer, todoTextCompleted, deleteTodo } = state
+    todosContainer, todoTextCompleted, deleteTodo } = state */
 
   const { 
     DELETE_TODO, TOGGLE_TODO_COMPLETED, SET_TODO_DUE_DATE, LOAD_MORE_TODOS } = ACTIONS
 
-  useLoadMore(dispatcher, LOAD_MORE_TODOS)
+  useLoadMore(dispatch, loadMoreTodos)
 
   const showNoTasksMessage = () => {
     if(showTodos().length < 1) { 

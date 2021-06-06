@@ -1,13 +1,21 @@
 import React,{ useState } from "react"
 import {Paper, Box,TextField,Button,Icon} from "@material-ui/core";
-
-import {useTodosContext} from "../../TodosContext"
+import { useSelector, useDispatch } from "react-redux"
+import useStyles from "../../hooks/useStyles"
+import {addTodo} from "../../redux/todosReducer"
+//import {useTodosContext} from "../../context/TodosContext"
 
 function AddTodo() {
+
     const [newTodoText, setNewTodoText] = useState("");
-    const { dispatcher, ACTIONS, state } = useTodosContext()
-    const { addTodoContainer, addTodoButton } = state
-    const { ADD_TODO } = ACTIONS
+    const classes = useStyles()
+    const { addTodoContainer, addTodoButton } = classes
+    const error = useSelector(state => state.error)
+    const dispatch = useDispatch()
+
+    //const { dispatcher, ACTIONS, state } = useTodosContext()
+    //const { addTodoContainer, addTodoButton } = state
+    //const { ADD_TODO } = ACTIONS
     return (
         <Paper className={addTodoContainer}>
             <Box display="flex" flexDirection="row">
@@ -21,7 +29,7 @@ function AddTodo() {
                     placeholder="Enter Tasks Here"
                     onKeyPress={(event) => {
                         if (event.key === "Enter") {
-                        dispatcher(ADD_TODO, {newTodoText, setNewTodoText})
+                            dispatch(addTodo(newTodoText, setNewTodoText))
                         }
                     }}
                     onChange={(event) => setNewTodoText(event.target.value)}
@@ -31,11 +39,24 @@ function AddTodo() {
                     data-testid="add-to-do-btn"
                     className={addTodoButton}
                     startIcon={<Icon>add</Icon>}
-                    onClick={() => dispatcher(ADD_TODO, {newTodoText, setNewTodoText})}
+                    onClick={() => dispatch(addTodo(newTodoText, setNewTodoText))}
                 >
                     Add
                 </Button>
             </Box>
+            {error && 
+            <span style={
+                {
+                    display:"flex", 
+                    flexDirection: "row",
+                    justifyContent: "center", 
+                    alignItems:"center",
+                    fontSize: "20px",
+                    color: "red",
+                    padding: "0.01em",
+                    marginTop: "4px"
+                }
+                }>{error}</span>}
         </Paper>
     )
 }

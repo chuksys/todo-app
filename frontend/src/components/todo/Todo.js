@@ -7,16 +7,19 @@ import {
     Checkbox
   } from "@material-ui/core";
 import DatePicker from "../todo_date_picker/TodoDatePicker"
-import { useTodosContext } from "../../TodosContext"
+import { useTodosContext } from "../../context/TodosContext"
 import  useDraggable  from "../../hooks/useDraggable"
+import { useDispatch } from "react-redux"
+import { toggleTodoCompleted, deleteTodoFn, setTodoDueDate } from "../../redux/todosReducer"
 
 function Todo(props) {
-    const { id, text, completed, due_date, priority } = props.todo
+    const { id, text, completed, dueDate, priority } = props.todo
     const { TOGGLE_TODO_COMPLETED, DELETE_TODO, SET_TODO_DUE_DATE } = props.actions
     const { todoContainerStyle, todoTextCompleted, deleteTodo } = props.classes
     const [dialogIsOpen, setDialogIsOpen] = useState(false)
     const [isFocused, setIsFocused] = useState(false)
-    const { dispatcher } = useTodosContext()
+    //const { dispatch } = useTodosContext()
+    const dispatch = useDispatch()
     const { dragStartHandler, dragOverHandler, dropHandler } = useDraggable()
     
     useEffect(() => {
@@ -40,7 +43,7 @@ function Todo(props) {
               startIcon={<Icon>schedule</Icon>}
               onClick={()=>handleClick(id)}
               >
-              {due_date !== undefined ? "CHANGE" : "SET"} Due Date
+              {dueDate !== undefined ? "CHANGE" : "SET"} Due Date
               </Button>
         )
       }
@@ -63,13 +66,14 @@ function Todo(props) {
                 dialogIsOpen={dialogIsOpen}
                 setDialogIsOpen={setDialogIsOpen}
                 parentId={id}
-                defaultDueDate={due_date}
+                defaultDueDate={dueDate}
                 actions={{SET_TODO_DUE_DATE}}
-                dispatcher={dispatcher}
+                dispatcher={dispatch}
+                setTodoDueDateFn={setTodoDueDate}
               />
                 <Checkbox
                   checked={completed}
-                  onChange={() => dispatcher(TOGGLE_TODO_COMPLETED, {id})}
+                  onChange={() => dispatch(toggleTodoCompleted(id))}
                 />
                 <Box flexGrow={1}>
                   <Typography
@@ -85,7 +89,7 @@ function Todo(props) {
                 <Button
                   className={deleteTodo}
                   startIcon={<Icon>delete</Icon>}
-                  onClick={() => dispatcher(DELETE_TODO, {id})}
+                  onClick={() => dispatch(deleteTodoFn(id))}
                 >
                   Delete
                 </Button>

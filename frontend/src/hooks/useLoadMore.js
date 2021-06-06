@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react"
 
-function useLoadMore(dispatcher, actionType) {
+function useLoadMore(dispatch, loadMoreTodos) {
     const [isBottom, setIsBottom] = useState(false);
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    useEffect(() => {
+        if (isBottom) {
+            dispatch(loadMoreTodos(setIsBottom))
+        }
+    }, [isBottom]);
 
     function handleScroll() {
             const scrollTop = (document.documentElement 
@@ -22,12 +28,6 @@ function useLoadMore(dispatcher, actionType) {
                 
             }
     }
-
-    useEffect(() => {
-        if (isBottom) {
-            dispatcher(actionType, {setIsBottom})
-        }
-    }, [isBottom]);
 
 }
 

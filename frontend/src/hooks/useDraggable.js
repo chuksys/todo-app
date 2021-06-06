@@ -1,9 +1,12 @@
 import React from "react"
-import { useTodosContext } from "../TodosContext"
+import { useTodosContext } from "../context/TodosContext"
+import { useDispatch } from "react-redux"
+import { changeTodoPriority } from "../redux/todosReducer"
 
 function useDraggable() {
-    const { dispatcher, ACTIONS } = useTodosContext()
-    const { CHANGE_TODO_PRIORITY } = ACTIONS
+    //const { dispatcher, ACTIONS } = useTodosContext()
+    const dispatch = useDispatch()
+    //const { CHANGE_TODO_PRIORITY } = ACTIONS
 
     function dropHandler(e, todoPriority, todoId) {
         e.preventDefault()
@@ -11,7 +14,7 @@ function useDraggable() {
         let dragTargetTodoPriority = e.dataTransfer.getData("todoPriority")
 
         const priority = todoPriority + 1
-        dispatcher(CHANGE_TODO_PRIORITY, {dragid: dragTargetTodoId, dropid: todoId, priority})
+        //dispatcher(CHANGE_TODO_PRIORITY, {dragid: dragTargetTodoId, dropid: todoId, priority})
     }
 
     function dragOverHandler(e){

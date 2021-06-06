@@ -12,20 +12,20 @@ const getTodos = async (req, res) => {
     const { offset, limit } = req.query
     const query = {}
 
-    if(req.query.hasOwnProperty("due_date")) {
-        const { due_date } = req.query
+    if(req.query.hasOwnProperty("dueDate")) {
+        const { dueDate } = req.query
 
         if (typeof due_date !== 'string') {
           res.status(400);
-          res.json({ message: "invalid 'due_date' expected string" });
+          res.json({ message: "invalid 'dueDate' expected string" });
           return;
         }
 
-        query.due_date = due_date
+        query.dueDate = dueDate
     }
 
     const todos = database.client.db('todos').collection('todos');
-    const response = await todos.find(query).sort( { priority: -1 } ).skip(parseInt(offset))
+    const response = await todos.find(query).skip(parseInt(offset))
     .limit(parseInt(limit)).toArray();
     
     res.status(200);
@@ -33,18 +33,20 @@ const getTodos = async (req, res) => {
 }
 
 const postTodo = async (req, res) => {
-    const { text } = req.body;
+    
+    const newTodo = req.body
   
-    if (typeof text !== 'string') {
+     if (typeof newTodo !== 'object') {
       res.status(400);
-      res.json({ message: "invalid 'text' expected string" });
+      res.json({ message: "invalid 'todo' expected object" });
       return;
     }
   
-    const todo = { id: generateId(), text, completed: false, priority: 1 };
-    await database.client.db('todos').collection('todos').insertOne(todo);
+    //const todo = { id: generateId(), text, completed: false, priority: 1 };
+
+    await database.client.db('todos').collection('todos').insertOne(newTodo);
     res.status(201);
-    res.json(todo);
+    res.json(newTodo);
 }
 
 const updateTodo = async (req, res) => {
@@ -93,18 +95,18 @@ const updateTodo = async (req, res) => {
       }
   }
 
-  if(req.body.hasOwnProperty('due_date')) {
-    const { due_date } = req.body;
+  if(req.body.hasOwnProperty('dueDate')) {
+    const { dueDate } = req.body;
 
-    if (typeof due_date !== 'string') {
+    if (typeof dueDate !== 'string') {
       res.status(400);
-      res.json({ message: "invalid 'due_date' expected string" });
+      res.json({ message: "invalid 'dueDate' expected string" });
       return;
 
     } else {
 
       await database.client.db('todos').collection('todos').updateOne({ id },
-        { $set: { due_date }  });
+        { $set: { dueDate }  });
       res.status(200);
       res.json({message: "Due Date Updated"})
       res.end();

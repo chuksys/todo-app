@@ -1,8 +1,10 @@
 import React, { useState } from "react"
 import {Container, TextField, Button} from "@material-ui/core"
-import { useTodosContext } from "../../TodosContext"
+import { useTodosContext } from "../../context/TodosContext"
 import { format } from 'date-fns';
 import { MuiPickersUtilsProvider, DatePicker} from '@material-ui/pickers';
+import { filterTodosByDueDate, resetTodosDateFilter } from "../../redux/todosReducer"
+import { useSelector, useDispatch } from "react-redux"
 
 const formatDate = (date = new Date()) => {
     return format(date, "yyyy-MM-dd")
@@ -11,14 +13,18 @@ const formatDate = (date = new Date()) => {
 function FilterTodos() {
     const todaysDate = new Date();
     const [selectedDate, setSelectedDate] = useState(formatDate())
-    const { dispatcher, ACTIONS } = useTodosContext()
-    const { FILTER_TODOS_BY_DATE, RESET_TODOS_DATE_FILTER } = ACTIONS
+    const state = useSelector(state => state)
+    const dispatch = useDispatch()
+
+    //const { dispatcher, ACTIONS } = useTodosContext()
+    //const { FILTER_TODOS_BY_DATE, RESET_TODOS_DATE_FILTER } = ACTIONS
 
     const handleChange = (e) => {
         const date = e.target.value
         setSelectedDate(formatDate(new Date(date)))
-    
-        dispatcher(FILTER_TODOS_BY_DATE, {date: formatDate(new Date(date))})
+        dispatch(filterTodosByDueDate(formatDate(new Date(date))))
+
+        //dispatcher(FILTER_TODOS_BY_DATE, {date: formatDate(new Date(date))})
     }
 
     const style = {
@@ -51,7 +57,8 @@ function FilterTodos() {
             size="small"
             variant="outlined" 
             color="primary" 
-            onClick={()=>dispatcher(RESET_TODOS_DATE_FILTER)}>
+            onClick={()=>dispatch(resetTodosDateFilter())}
+            >
                 Reset Filter
             </Button>
 

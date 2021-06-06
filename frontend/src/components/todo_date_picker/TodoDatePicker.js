@@ -11,7 +11,8 @@ function TodoDatePicker(props) {
         setIsParentFocused, 
         parentId, 
         actions,
-        dispatcher, 
+        dispatcher,
+        setTodoDueDateFn, 
         defaultDueDate 
     } = props
 
@@ -24,7 +25,8 @@ function TodoDatePicker(props) {
     const handleDateChange = (date) => {
         setDueDate(formatDate(date))
         console.log(date)
-        dispatcher(actions.SET_TODO_DUE_DATE, {"id": parentId, "dueDate": formatDate(date)})
+        //dispatcher(actions.SET_TODO_DUE_DATE, {"id": parentId, "dueDate": formatDate(date)})
+        dispatcher(setTodoDueDateFn(parentId, formatDate(date)))
     };
 
      useEffect(()=>{
